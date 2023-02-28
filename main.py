@@ -45,9 +45,29 @@ def pad(x,y):
     return x,y
 
 def quadratic_multiply(x, y):
-    ### TODO
-    pass
-    ###
+    return _quadratic_multiply(x, y).decimal_val
+    
+def _quadratic_multiply(x, y):
+    xvec = x.binary_vec
+    yvec = y.binary_vec
+    xvec, yvec = pad(xvec, yvec)
+    if x.decimal_val <=1 and y.decimal_val <=1:
+        return BinaryNumber(x.decimal_val * y.decimal_val)
+    
+    xL, xR = split_number(xvec)
+    yL, yR = split_number(yvec)
+    
+    left = _quadratic_multiply(xL, yL)
+    left = bit_shift(left, len(xvec))
+    right = _quadratic_multiply(xR, yR)
+    midL = _quadratic_multiply(xL, yR)
+    midR = _quadratic_multiply(xR, yL)
+    mid = BinaryNumber(midL.decimal_val + midR.decimal_val)
+    mid = bit_shift(mid, len(xvec)//2)
+    
+    result = BinaryNumber(left.decimal_val + mid.decimal_val + right.decimal_val)
+    return result
+
 
 
 
@@ -61,6 +81,7 @@ def time_multiply(x, y, f):
     # multiply two numbers x, y using function f
     return (time.time() - start)*1000
 
+test_multiply()
 
     
     
